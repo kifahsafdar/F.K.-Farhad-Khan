@@ -9,7 +9,7 @@ const reviewStorageKey = "fk-fragrances-reviews-v1";
 const formatPrice = (amount) =>
   `PKR ${new Intl.NumberFormat("en-PK", { maximumFractionDigits: 0 }).format(amount)}`;
 const priceFor = (item, size) =>
-  ({ 50: 599, 150: 1199, 250: 2999 }[String(size)] ?? item.basePrice ?? 0);
+  ({ 5: 299, 50: 2999 }[String(size)] ?? item.basePrice ?? 0);
 
 if (!product) {
   document.title = "Fragrance not found — Farhad Khan";
@@ -174,7 +174,7 @@ function initializeProductPage(item) {
           [id, size] = key.split("|");
         }
         const quantity = Number(rawQuantity);
-        if (products[id] && ["50", "150", "250", "10", "30"].includes(size) &&
+        if (products[id] && ["5", "50"].includes(size) &&
             Number.isSafeInteger(quantity) && quantity > 0 && quantity <= 99) {
           cart.set(`${id}|${size}`, quantity);
         }

@@ -28,7 +28,7 @@ const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const formatPrice = (amount) =>
   `PKR ${new Intl.NumberFormat("en-PK", { maximumFractionDigits: 0 }).format(amount)}`;
 const priceFor = (product, size) =>
-  ({ 50: 599, 150: 1199, 250: 2999 }[String(size)] ?? product.basePrice ?? 0);
+  ({ 5: 299, 50: 2999 }[String(size)] ?? product.basePrice ?? 0);
 
 const products = new Map(
   productCards.map((card) => {
