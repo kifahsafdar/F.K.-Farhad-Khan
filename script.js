@@ -9,6 +9,8 @@ const emptyMessage = document.querySelector(".filter-empty");
 const pagination = document.querySelector(".pagination");
 const paginationPages = document.querySelector(".pagination-pages");
 const paginationStatus = document.querySelector(".pagination-status");
+const mobileLayoutQuery = window.matchMedia("(max-width: 560px)");
+const mobileLayoutButtons = document.querySelectorAll(".layout-toggle-button");
 const cartToggle = document.querySelector(".cart-toggle");
 const cartDialog = document.querySelector("#cart-dialog");
 const cartItems = document.querySelector(".cart-items");
@@ -23,7 +25,6 @@ const toast = document.querySelector(".shop-toast");
 const collection = document.querySelector("#collection");
 const storageKey = "fk-fragrances-cart-v1";
 const orderNumber = "923136000665";
-const pageSize = 2;
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const formatPrice = (amount) =>
   `PKR ${new Intl.NumberFormat("en-PK", { maximumFractionDigits: 0 }).format(amount)}`;
@@ -72,7 +73,6 @@ let activeStockFilter = "all";
 let activeSort = "recommended";
 
 function updateCatalogSize(size) {
-  document.querySelector("#catalog-size").value = size;
   productCards.forEach((card) => {
     const selector = card.querySelector("[data-size-selector]");
     selector.value = size;
@@ -187,7 +187,7 @@ function updateCart() {
   }
 }
 
-function addToCart(id, size = "50") {
+function addToCart(id, size = "50", quantity = 1) {
   const product = products.get(id);
   if (!product) {
     console.error(`Cannot add unknown product "${id}" to the shopping bag.`);
@@ -196,13 +196,18 @@ function addToCart(id, size = "50") {
   }
 
   const key = `${id}|${size}`;
-  if ((cart.get(key) || 0) >= 99) {
+  const currentQuantity = cart.get(key) || 0;
+  if (
+    !Number.isSafeInteger(quantity) ||
+    quantity < 1 ||
+    currentQuantity + quantity > 99
+  ) {
     showToast("You can add up to 99 of each scent and size.");
     return;
   }
-  cart.set(key, (cart.get(key) || 0) + 1);
+  cart.set(key, currentQuantity + quantity);
   updateCart();
-  showToast(`${product.name} (${size} ml) added to your bag.`);
+  showToast(`${product.name} (${size} ml) × ${quantity} added to your bag.`);
   cartToggle.classList.remove("has-bump");
   window.requestAnimationFrame(() => cartToggle.classList.add("has-bump"));
 }
@@ -220,6 +225,7 @@ function openProductDetails(id) {
 }
 
 function renderCollection({ scroll = false } = {}) {
+  const pageSize = mobileLayoutQuery.matches ? productCards.length : 2;
   const filteredProducts = productCards
     .filter((card) => activeFilter === "all" || card.dataset.family === activeFilter)
     .filter((card) => activeStockFilter === "all" || card.dataset.stock === (activeStockFilter === "in-stock" ? "in" : "out"))
@@ -338,6 +344,7 @@ document.querySelectorAll("[data-add-product]").forEach((button) => {
     addToCart(
       button.dataset.addProduct,
       card.querySelector("[data-size-selector]").value,
+      Number(document.querySelector("#catalog-quantity").value),
     );
   });
 });
@@ -383,6 +390,24 @@ document.querySelector(".pagination").addEventListener("click", (event) => {
   }
 
   renderCollection({ scroll: true });
+});
+
+mobileLayoutButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const columns = Number(button.dataset.columns);
+    productGrid.classList.toggle("is-single-column", columns === 1);
+    mobileLayoutButtons.forEach((layoutButton) =>
+      layoutButton.setAttribute(
+        "aria-pressed",
+        String(layoutButton === button),
+      ),
+    );
+  });
+});
+
+mobileLayoutQuery.addEventListener("change", () => {
+  currentPage = 1;
+  renderCollection();
 });
 
 checkoutForm.addEventListener("submit", (event) => {
@@ -482,10 +507,6 @@ document.querySelector("#stock-filter").addEventListener("change", (event) => {
   currentPage = 1;
   renderCollection();
 });
-document.querySelector("#catalog-size").addEventListener("change", (event) => {
-  updateCatalogSize(event.currentTarget.value);
-});
-
 const heroSlides = Array.from(products.values()).sort(
   (first, second) =>
     window.FK_PRODUCTS[first.id].recommendation -

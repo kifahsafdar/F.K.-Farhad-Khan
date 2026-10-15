@@ -136,26 +136,43 @@
           <label class="catalog-control">
             Sort by
             <select id="sort-products" name="sort">
-              <option value="recommended">Best recommended</option>
-              <option value="price-low">Price: low to high</option>
-              <option value="price-high">Price: high to low</option>
+              <option value="recommended">Recommended</option>
+              <option value="price-low">Low price</option>
+              <option value="price-high">High price</option>
             </select>
           </label>
           <label class="catalog-control">
             Availability
             <select id="stock-filter" name="availability">
-              <option value="all">All availability</option>
+              <option value="all">All</option>
               <option value="in-stock">In stock</option>
               <option value="out-of-stock">Out of stock</option>
             </select>
           </label>
           <label class="catalog-control">
-            Bottle size
-            <select id="catalog-size" name="size">
-              <option value="50">50 ml</option>
-              <option value="5">5 ml</option>
+            Quantity
+            <select id="catalog-quantity" name="quantity">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
             </select>
           </label>
+          <div class="mobile-layout-toggle" role="group" aria-label="Products per row">
+            <span>View</span>
+            <button class="layout-toggle-button" type="button" data-columns="1" aria-label="Show one product per row" aria-pressed="false">
+              <span class="layout-icon layout-icon-single" aria-hidden="true"><span></span></span>
+            </button>
+            <button class="layout-toggle-button" type="button" data-columns="2" aria-label="Show two products per row" aria-pressed="true">
+              <span class="layout-icon layout-icon-double" aria-hidden="true"><span></span><span></span></span>
+            </button>
+          </div>
           <p class="catalog-results" aria-live="polite">Showing all 4 fragrances</p>
         </div>
         <p class="price-note">50 / 5 ml · Prices in PKR · Availability confirmed on WhatsApp</p>
